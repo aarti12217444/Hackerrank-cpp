@@ -1,0 +1,73 @@
+#include <iostream>
+#include <sstream>
+#include <map>
+#include <vector>
+using namespace std;
+
+int main() {
+    int n, q;
+    cin >> n >> q;
+    cin.ignore(); // To ignore the newline character after reading n and q
+
+    map<string, map<string, string>> hrml;
+    vector<string> tag_stack;
+
+    // Reading HRML input
+    for (int i = 0; i < n; ++i) {
+        string line;
+        getline(cin, line);
+
+        if (line[1] == '/') {
+            // Closing tag: Remove the last tag from the stack
+            tag_stack.pop_back();
+        } else {
+            // Parse opening tag
+            stringstream ss(line);
+            string tag, attribute, equals, value;
+            char temp;
+
+            ss >> temp >> tag; // Read '<' and tag name
+            if (tag.back() == '>') {
+                tag.pop_back(); // Remove '>' if there are no attributes
+            }
+
+            string full_tag;
+            if (!tag_stack.empty()) {
+                full_tag = tag_stack.back() + "." + tag;
+            } else {
+                full_tag = tag;
+            }
+
+            tag_stack.push_back(full_tag);
+
+            while (ss >> attribute) {
+                ss >> equals >> value;
+                if (value.back() == '>') {
+                    value.pop_back(); // Remove trailing '>' if it's the last attribute
+                }
+                value.pop_back(); // Remove the trailing '"'
+                value = value.substr(1); // Remove the leading '"'
+
+                hrml[tag_stack.back()][attribute] = value;
+            }
+        }
+    }
+
+    // Process queries
+    for (int i = 0; i < q; ++i) {
+        string query;
+        getline(cin, query);
+
+        size_t pos = query.find('~');
+        string tag_path = query.substr(0, pos);
+        string attr = query.substr(pos + 1);
+
+        if (hrml.find(tag_path) != hrml.end() && hrml[tag_path].find(attr) != hrml[tag_path].end()) {
+            cout << hrml[tag_path][attr] << endl;
+        } else {
+            cout << "Not Found!" << endl;
+        }
+    }
+
+    return 0;
+}

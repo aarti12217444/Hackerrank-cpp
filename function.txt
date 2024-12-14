@@ -1,0 +1,18 @@
+#include <iostream>
+using namespace std;
+
+// Function to find the maximum of four integers
+int max_of_four(int a, int b, int c, int d) {
+    int max_val = a; // Assume the first number is the largest initially
+    if (b > max_val) max_val = b; // Update if b is larger
+    if (c > max_val) max_val = c; // Update if c is larger
+    if (d > max_val) max_val = d; // Update if d is larger
+    return max_val; // Return the largest value
+}
+
+int main() {
+    int a, b, c, d;
+    cin >> a >> b >> c >> d; // Read four integers
+    cout << max_of_four(a, b, c, d) << endl; // Output the maximum
+    return 0;
+}
